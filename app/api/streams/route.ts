@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import {z} from "zod";
 
-const YT_regex = new RegExp("^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})(?:[?&].*)?")
+var YT_regex = /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com\/(?:watch\?(?!.*\blist=)(?:.*&)?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[?&]\S+)?$/
 const CreatorStreamScheme=z.object({
 creatorId : z.string(),
 url : z.string()
@@ -12,7 +12,7 @@ url : z.string()
 export async function POST(req:NextRequest) {
     try{
         const data = CreatorStreamScheme.parse(await req.json());
-        const isyt = YT_regex.test(data.url);
+        const isyt = data.url.match(YT_regex);
         if(!isyt){
             return NextResponse.json({
                 message:"Url is not correct"
@@ -21,13 +21,19 @@ export async function POST(req:NextRequest) {
             })
         }
         const extractedId = data.url.split("?v=")[1];
-        await prisma.stream.create({
+        const stream = await prisma.stream.create({
             data:{
                 userId:data.creatorId,
                 url:data.url,
                 extracedId:extractedId,
                 type: "Youtube" 
             }
+        })
+        return NextResponse.json({
+            message:"added stream successfully",
+            id : stream.id
+        },{
+            status:200
         })
     }catch(err){
         return NextResponse.json({

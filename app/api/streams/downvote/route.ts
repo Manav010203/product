@@ -5,17 +5,17 @@ import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
 
 const upvoteReq = z.object({
-    userId:z.string(),
+    // userId:z.string(),
     streamId : z.string(),
-    upvote:z.boolean()
+    // upvote:z.boolean()
 })
 export async function POST(req:NextRequest) {
         const data = upvoteReq.parse(await req.json());
 
         const session = await getServerSession();
-        const user = await prisma.user.findFirst({
+        const user = await prisma.user.findUnique({
             where:{
-                id: session?.user?.email ??""
+                email: session?.user?.email ??""
             }
         })
         if(!user){
@@ -33,6 +33,11 @@ export async function POST(req:NextRequest) {
                 streamId:data.streamId,
                 userId:user.id
             }}
+        })
+        return NextResponse.json({
+            message:"dounvoted the stream"
+        },{
+            status:200
         })
     }catch(err){
         return NextResponse.json({
