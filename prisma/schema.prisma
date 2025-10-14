@@ -26,6 +26,9 @@ model Stream {
   type      StreamType
   url       String
   extracedId  String
+  title     String    @default("")
+  smallImg  String    @default("")
+  bigImg    String    @default("")
   active    Boolean @default(true)
   upvotes   Upvote[]
   userId    String
@@ -35,6 +38,7 @@ model Upvote{
   id        String  @id @default(uuid())
   userId    String
   streamId  String
+  hasUpvoted Boolean @default(false)
   user      User    @relation( fields: [userId],references: [id])
   stream    Stream  @relation(fields: [streamId],references: [id])
   @@unique([userId,streamId])
