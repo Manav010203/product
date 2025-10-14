@@ -26,7 +26,7 @@ export default function HomePage() {
               Explore Streams
             </a>
             <a
-              href="/api/auth/signin"
+              href="/creator"
               className="border border-blue-300 text-blue-300 px-6 py-3 rounded-lg font-semibold hover:bg-blue-800 transition"
             >
               Join as Creator
@@ -81,3 +81,4 @@ export default function HomePage() {
     </main>
   );
 }
+
