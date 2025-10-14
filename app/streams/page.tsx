@@ -420,7 +420,7 @@ export default function StreamsPage() {
         videoId: streams[0].extracedId,
         events: {
           onStateChange: (event: any) => {
-            if (event.data === YT.PlayerState.ENDED) {
+            if (event.data === 0) { // 0 is YT.PlayerState.ENDED
               playNextStream();
             }
           },
